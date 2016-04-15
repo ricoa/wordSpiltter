@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: 2016-03-31 10:20:09
+-- Generation Time: 2016-04-15 05:20:10
 -- 服务器版本： 5.6.17
 -- PHP Version: 5.5.12
 
@@ -23,21 +23,22 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- 表的结构 `dicts`
+-- 表的结构 `chars`
 --
 
-CREATE TABLE IF NOT EXISTS `dicts` (
+CREATE TABLE IF NOT EXISTS `chars` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `char_name` varchar(10) COLLATE utf8_unicode_ci NOT NULL,
+  `char_name` char(1) COLLATE utf8_unicode_ci NOT NULL,
   `num` int(11) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=6764 ;
+  PRIMARY KEY (`id`),
+  KEY `char_name` (`char_name`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=6764 ;
 
 --
--- 转存表中的数据 `dicts`
+-- 转存表中的数据 `chars`
 --
 
-INSERT INTO `dicts` (`id`, `char_name`, `num`) VALUES
+INSERT INTO `chars` (`id`, `char_name`, `num`) VALUES
 (1, '的', 42002496),
 (2, '一', 18961414),
 (3, '了', 18900523),
@@ -2516,7 +2517,7 @@ INSERT INTO `dicts` (`id`, `char_name`, `num`) VALUES
 (2476, '乙', 19301),
 (2477, '喔', 19266),
 (2478, '翰', 19223);
-INSERT INTO `dicts` (`id`, `char_name`, `num`) VALUES
+INSERT INTO `chars` (`id`, `char_name`, `num`) VALUES
 (2479, '坎', 19218),
 (2480, '革', 19216),
 (2481, '彤', 19203),
@@ -5153,7 +5154,7 @@ INSERT INTO `dicts` (`id`, `char_name`, `num`) VALUES
 (5112, '锒', 289),
 (5113, '篾', 288),
 (5114, '缦', 288);
-INSERT INTO `dicts` (`id`, `char_name`, `num`) VALUES
+INSERT INTO `chars` (`id`, `char_name`, `num`) VALUES
 (5115, '熨', 287),
 (5116, '杌', 286),
 (5117, '硌', 283),
@@ -6812,6 +6813,8 @@ INSERT INTO `dicts` (`id`, `char_name`, `num`) VALUES
 
 CREATE TABLE IF NOT EXISTS `records` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `md5` char(32) COLLATE utf8_unicode_ci NOT NULL,
+  `type` char(1) COLLATE utf8_unicode_ci NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
 
@@ -6823,9 +6826,9 @@ CREATE TABLE IF NOT EXISTS `records` (
 
 CREATE TABLE IF NOT EXISTS `settings` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
-  `data` text COLLATE utf8_unicode_ci NOT NULL,
-  `remark` varchar(255) COLLATE utf8_unicode_ci NOT NULL DEFAULT '' COMMENT '说明',
+  `name` varchar(20) COLLATE utf8_unicode_ci NOT NULL,
+  `data` varchar(20) COLLATE utf8_unicode_ci NOT NULL,
+  `remark` varchar(20) COLLATE utf8_unicode_ci NOT NULL DEFAULT '' COMMENT '说明',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=2 ;
 
@@ -6844,9 +6847,19 @@ INSERT INTO `settings` (`id`, `name`, `data`, `remark`) VALUES
 
 CREATE TABLE IF NOT EXISTS `words` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `word_name` varchar(20) COLLATE utf8_unicode_ci NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
+  `word_name` varchar(10) COLLATE utf8_unicode_ci NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `word_name` (`word_name`),
+  KEY `word_name_2` (`word_name`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=3 ;
+
+--
+-- 转存表中的数据 `words`
+--
+
+INSERT INTO `words` (`id`, `word_name`) VALUES
+(1, '剥夺'),
+(2, '睡眠');
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
