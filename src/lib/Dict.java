@@ -4,20 +4,22 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import lib.helpers.Functions;
 import lib.helpers.Mysql;
 import lib.interfaces.IDict;
+
 public class Dict implements IDict{
 
 	protected Mysql mysql=null;
 	private int character_num=0;
 	
-	@Override
+	/**
+	 * 初始化
+	 */
 	public void init() {
 		//初始化数据库数据
-		this.mysql=new Mysql();
+		this.mysql=Mysql.getInstance();
 		
+		//初始化数据库中的数据
 		List<Map<String, Object>> setting = this.mysql.select("select `data` from settings where `name` like 'character_num' limit 1");
 		if(setting.isEmpty()){
 			this.mysql.insert("INSERT INTO `settings` (`id`, `name`, `data`) VALUES (NULL, 'character_num', '0');");
@@ -33,28 +35,19 @@ public class Dict implements IDict{
 	}
 	
 	/**
-	 * 清空数据库
+	 * 更新单个字符的个数,批量更新
+	 * @param c
+	 * @param num
 	 */
-	public void resetDict() {
-		
-		this.mysql.update("TRUNCATE TABLE `dicts`;");
-		this.mysql.update("TRUNCATE TABLE `words`;");
-		this.mysql.update("TRUNCATE TABLE `records`;");
-	}
-
-	/**
-	 * 获取处理过的总字符数
-	 * @return
-	 */
-	public int getAllCharacterNum() {
-		return character_num;
-	}
-
-	/**
-	 * 增加处理过的字符数
-	 */
-	public void incAllCharacterNum() {
-		this.character_num +=1;
+	public void updateDictByMap(Map<?, ?> map) {
+		Set<?> s = map.keySet();        
+        Iterator<?> i = s.iterator();
+        Statement statement=null;
+        while(i.hasNext()) {
+            Object o = i.next();
+            statement=this.mysql.addBatch(statement,"update `chars` set num=num+"+map.get(o)+" where char_name='"+o+"';");
+        }
+		this.mysql.executeBatch(statement);
 	}
 	
 	/**
@@ -65,44 +58,63 @@ public class Dict implements IDict{
 	}
 	
 	/**
-	 * 字符不存在则新增
-	 * @param c
+	 * 重置数据库
 	 */
-	public void createChar(char c) {
+	public void resetDict() {
 		
-		List<Map<String, Object>> dict=this.mysql.select("select num from dicts where char_name='"+c+"'");
-		if(dict.isEmpty()){
-			this.mysql.insert("INSERT INTO `dicts` (`id`, `char_name`) VALUES (NULL, '"+c+"');");
-			
-		}
+		this.mysql.update("TRUNCATE TABLE `chars`;");
+		this.mysql.update("TRUNCATE TABLE `words`;");
+		this.mysql.update("TRUNCATE TABLE `records`;");
 	}
 	
 	/**
-	 * 更新单个字符的个数
-	 * @param c
-	 * @param num
+	 * 获取处理过的总字符数
+	 * @return
 	 */
-	public void updateCharNum(Map map) {
-		Set s = map.keySet();        
-        Iterator i = s.iterator();
-        Statement statement=null;
-        while(i.hasNext()) {
-            Object o = i.next();
-            statement=this.mysql.addBatch(statement,"update `dicts` set num=num+"+map.get(o)+" where char_name='"+o+"';");
-        }
-		this.mysql.executeBatch(statement);
+	public int getAllCharacterNum() {
+		return character_num;
+	}	
+	
+	/**
+	 * 是否存在字符
+	 * 
+	 * @param c
+	 * @return
+	 */
+	public boolean existsChar(char c) {
+		List<Map<String, Object>> dict=this.mysql.select("select num from chars where char_name='"+c+"'");
+		return !dict.isEmpty();
 	}
 	
-	public int getNumOfChars(String chars) {
-		List<Map<String, Object>> dict=this.mysql.select("select num from dicts where char_name='"+chars+"'");
+	/**
+	 * 字符新增
+	 * @param c
+	 */
+	public void createChar(char c) {
+		this.mysql.insert("INSERT INTO `chars` (`id`, `char_name`) VALUES (NULL, '"+c+"');");
+	}
+	
+	/**
+	 * 获取字符出现数
+	 * @param chars
+	 * @return
+	 */
+	public int getNumOfChars(char c) {
+		List<Map<String, Object>> dict=this.mysql.select("select num from chars where char_name='"+c+"'");
 		if(dict.isEmpty()){
 			return 0;
 		}
-		
 		return Integer.parseInt(dict.get(0).get("num").toString());
 	}
 	
+	
+	
 	public void addWord(String word) {
+		if(word.length()>=2){
+			if(!exitsWord(word)){
+				this.mysql.insert("INSERT INTO `words` (`id`, `word_name`) VALUES (NULL, '"+word+"');");
+			}
+		}
 		System.out.println(word);
 	}
 	

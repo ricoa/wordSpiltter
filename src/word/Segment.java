@@ -2,14 +2,16 @@ package word;
 
 import java.io.File;
 
+import lib.CharCounter;
 import lib.Dict;
-import lib.Spiltter;
+import lib.WordCounter;
 import lib.helpers.Functions;
 
-public class Main {
+public class Segment {
 	
 	public static void main(String[] args) {
 
+		
 		try {
 
 			// 默认处理路径
@@ -33,12 +35,18 @@ public class Main {
 			Dict dict=new Dict();
 			dict.init();
 			
-			Spiltter spiltter=new Spiltter(dict);
+			CharCounter counter=new CharCounter(dict);
+			WordCounter w_Counter=new WordCounter(dict);
 			
 			for (int i = 0; i < fs.length; i++) {
 
 				if (!fs[i].isDirectory()) {
-					spiltter.handle(fs[i].getAbsolutePath());
+//					System.out.println(Functions.fileMD5(fs[i].getAbsolutePath()));
+					counter.handle(fs[i].getAbsolutePath());
+
+					System.out.println(counter.getCharsNum());
+//					w_Counter.setCharsNum(counter.getCharsNum());
+//					w_Counter.handle(fs[i].getAbsolutePath());
 				}
 			}
 			

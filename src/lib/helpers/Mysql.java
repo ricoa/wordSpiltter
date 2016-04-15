@@ -13,34 +13,41 @@ import java.util.Map;
 
 public class Mysql {
 
-	protected static Connection con = null;
+	protected Connection con = null;
 
+	/**单例模式**/
+	private static class SingletonHolder {
+		private static final Mysql INSTANCE = new Mysql();
+	}
+
+	private Mysql() {
+		this.getConnection();
+	}
+
+	public static final Mysql getInstance() {
+		return SingletonHolder.INSTANCE;
+	}
+	/**单例模式**/
+	
 	/**
 	 * 该方法用户连接数据库
 	 * 
 	 * @return 返回Connection的一个实例
 	 */
-	public static Connection getConnection() {
+	public void getConnection() {
 
-		if (Mysql.con == null) {
+		if (this.con == null) {
 			try {
 
 				Class.forName(StaticVar.DRIVER_NAME).newInstance();
 
-				Mysql.con = DriverManager.getConnection(StaticVar.DB_URL, StaticVar.USER_NAME, StaticVar.DB_PASSWD);
+				this.con = DriverManager.getConnection(StaticVar.DB_URL, StaticVar.USER_NAME, StaticVar.DB_PASSWD);
 
-			} catch (InstantiationException e) {
-				e.printStackTrace();
-			} catch (IllegalAccessException e) {
-				e.printStackTrace();
-			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
-			} catch (SQLException e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 
 		}
-		return Mysql.con;
 	}
 
 	/**
@@ -53,11 +60,9 @@ public class Mysql {
 	public List<Map<String, Object>> select(String sql) {
 		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
 		ResultSet res = null;
-		con = Mysql.getConnection();
 		Statement state = null;
 		try {
 			if (!(con == null)) {
-
 				state = con.createStatement();
 				res = state.executeQuery(sql);
 			}
@@ -81,7 +86,6 @@ public class Mysql {
 				state.close();
 			}
 		} catch (SQLException e) {
-
 			e.printStackTrace();
 		}
 
@@ -96,8 +100,6 @@ public class Mysql {
 	 */
 	public int insert(String sql) {
 		int iId = -1;
-		con = Mysql.getConnection();
-
 		Statement state = null;
 		try {
 			if (con != null) {
@@ -133,7 +135,6 @@ public class Mysql {
 	 */
 	public boolean update(String sql) {
 		boolean updated = false;
-		con = Mysql.getConnection();
 		Statement state = null;
 		try {
 
@@ -166,9 +167,6 @@ public class Mysql {
 	 */
 	public boolean delete(String sql) {
 		boolean deleted = false;
-
-		con = Mysql.getConnection();
-
 		Statement state = null;
 
 		if (con != null) {
@@ -214,17 +212,15 @@ public class Mysql {
 	 * 
 	 * @param sql
 	 */
-	public Statement addBatch(Statement state,String sql) {
-		
-		con = Mysql.getConnection();
-		try { 
-			if(state==null){
-				 state = con.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,   
-		                                    ResultSet.CONCUR_READ_ONLY); 
+	public Statement addBatch(Statement state, String sql) {
+
+		try {
+			if (state == null) {
+				state = con.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
 			}
 			state.addBatch(sql);
 		} catch (SQLException e) {
-			
+
 			e.printStackTrace();
 		}
 		return state;
@@ -232,6 +228,7 @@ public class Mysql {
 
 	/**
 	 * 执行批量sql
+	 * 
 	 * @param state
 	 */
 	public void executeBatch(Statement state) {
