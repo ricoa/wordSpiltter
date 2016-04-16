@@ -4,8 +4,10 @@ import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -83,30 +85,45 @@ public class Functions {
 			FileInputStream in = new FileInputStream(file);
 			in.read(filecontent);
 			in.close();
+			return new String(filecontent,"gbk");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return "";
+	}
+	
+	public static String readToString2(File file) {
+		Long filelength = file.length(); // 获取文件长度
+		char[] filecontent = new char[filelength.intValue()];
+		try {
+			FileInputStream in = new FileInputStream(file);
+			BufferedInputStream fis = new BufferedInputStream(in);
+			BufferedReader reader= new BufferedReader(new InputStreamReader(fis, "gbk"), 4 * 1024 * 1024);
+			reader.read(filecontent);
+			reader.close();
+			fis.close();
+			in.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return new String(filecontent);// 返回文件内容,默认编码
 	}
 
-	public void test() {
-		// File file=new File(path);
-		// String content=readToString(file);
-		// content=content.replace(" ","");
-		// content=content.replace("#title#","");
-		// content=content.replace("#comment#","");
-		// content=content.replace("#content#","");
-		// content=content.replace("#emotion#","");
-		// content=content.replace("#/title#","");
-		// content=content.replace("#/comment#","");
-		// content=content.replace("#/content#","");
-		// content=content.replace("#/emotion#","");
-		// content=content.replace("#emotion_sum#","");
-		// content=content.replace("#/emotion_sum#","");
-		// content=content.replace("&quot;","");
-		// FileWriter fw = new FileWriter("./data2",true);
-		// fw.write(content+"\n\n");
-		// fw.close();
+	public static void merge(String path) {
+		 File file=new File(path);
+		 String content=readToString(file);
+		 content=content.replace("&nbsp", "");
+		 content=content.replace("\n\n", "\n");
+		 content=content.replace("  ", " ");
+		 FileWriter fw;
+		try {
+			fw = new FileWriter("./sogou",true);
+			fw.write(content+"\n");
+			fw.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public static String fileMD5(String inputFile) throws IOException {
@@ -160,5 +177,10 @@ public class Functions {
 			}
 		}
 		return hs;
+	}
+	
+	public static double log(double d, double base)
+	{
+	    return (Math.log(d) / Math.log(base));
 	}
 }

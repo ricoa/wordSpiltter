@@ -110,6 +110,7 @@ public class Dict implements IDict{
 	
 	
 	public void addWord(String word) {
+		
 		if(word.length()>=2){
 			if(!exitsWord(word)){
 				this.mysql.insert("INSERT INTO `words` (`id`, `word_name`) VALUES (NULL, '"+word+"');");
