@@ -1,5 +1,4 @@
-package lib.helpers;
-
+package word.lib.helpers;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;

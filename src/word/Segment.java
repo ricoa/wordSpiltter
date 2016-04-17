@@ -1,21 +1,25 @@
 package word;
 
+import java.io.BufferedReader;
 import java.io.File;
 
-import lib.CharCounter;
-import lib.Dict;
-import lib.TextSegment;
-import lib.WordCounter;
-import lib.helpers.Functions;
+import word.lib.CharCounter;
+import word.lib.Dict;
+import word.lib.TextSegment;
+import word.lib.WordCounter;
+import word.lib.helpers.Functions;
 
 public class Segment {
 	
 	public static void main(String[] args) {
 		// 时间计算
 		long startTime = System.currentTimeMillis();
+
 		// 计算运行时间
 		try {
 
+			Segment.test();
+			
 			if (args.length == 0) {
 
 				Segment.showTip();
@@ -110,4 +114,28 @@ public class Segment {
 			break;
 		}
 	}
+	
+	public static void test() throws Exception{
+		long startTime = System.currentTimeMillis();
+		Dict dict = new Dict();
+		dict.init();
+		CharCounter charCounter = new CharCounter(dict);
+		WordCounter wordCounter = new WordCounter(dict);
+		TextSegment textSegment = new TextSegment(dict);
+		
+		String path =  "src/data/original";
+		File root = new File(path);
+		File[] fs = root.listFiles();
+		
+		if (fs == null) {
+			Functions.dd("该目录下无可处理文件");
+		}
+		for (int i = 0; i < fs.length; i++) {
+			System.out.println(fs[i].getAbsolutePath());
+			wordCounter.handle(fs[i].getAbsolutePath());
+		}	
+		long endTime = System.currentTimeMillis();
+		System.out.println("\n程序运行时间： " + (endTime - startTime) + "ms");
+		System.exit(0);
+	}	
 }

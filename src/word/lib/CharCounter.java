@@ -1,8 +1,8 @@
-package lib;
+package word.lib;
 
 import java.io.BufferedReader;
 import java.util.HashMap;
-import lib.helpers.Functions;
+import word.lib.helpers.Functions;
 
 /**
  * 字频统计类，用于统计文件的字频

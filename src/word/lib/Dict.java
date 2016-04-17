@@ -1,11 +1,11 @@
-package lib;
+package word.lib;
 import java.sql.Statement;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import lib.helpers.Mysql;
-import lib.interfaces.IDict;
+import word.lib.helpers.Mysql;
+import word.lib.interfaces.IDict;
 
 public class Dict implements IDict{
 
@@ -43,11 +43,16 @@ public class Dict implements IDict{
 		Set<?> s = map.keySet();        
         Iterator<?> i = s.iterator();
         Statement statement=null;
+        boolean update=false;
         while(i.hasNext()) {
             Object o = i.next();
+            update=true;
             statement=this.mysql.addBatch(statement,"update `chars` set num=num+"+map.get(o)+" where char_name='"+o+"';");
         }
-		this.mysql.executeBatch(statement);
+        if(update){
+        	this.mysql.executeBatch(statement);
+        }
+		
 	}
 	
 	/**
@@ -113,10 +118,11 @@ public class Dict implements IDict{
 		
 		if(word.length()>=2){
 			if(!exitsWord(word)){
+				System.out.println(word);
 				this.mysql.insert("INSERT INTO `words` (`id`, `word_name`) VALUES (NULL, '"+word+"');");
 			}
 		}
-		System.out.println(word);
+//		System.out.println(word);
 	}
 	
 	public boolean exitsWord(String word){

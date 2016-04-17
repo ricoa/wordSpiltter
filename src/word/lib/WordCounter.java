@@ -1,12 +1,12 @@
-package lib;
+package word.lib;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 
 import com.mysql.jdbc.log.Log;
 
-import lib.helpers.Functions;
-import lib.helpers.StaticVar;
+import word.lib.helpers.Functions;
+import word.lib.helpers.StaticVar;
 
 public class WordCounter {
 
@@ -98,9 +98,9 @@ public class WordCounter {
 						}
 						double gap;
 						if (word_merged.length() > 2) {
-							gap = StaticVar.BI_MI_GAP;// 双字词互信息阈值
+							gap = StaticVar.N_MI_GAP;// 双字词互信息阈值
 						} else {
-							gap = StaticVar.N_MI_GAP;// 多字词互信息阈值
+							gap = StaticVar.BI_MI_GAP;// 多字词互信息阈值
 						}
 						if (m_i > gap) {
 							// 组合词互信息超过阈值才记为词
